@@ -10,7 +10,7 @@ cd "$ROOT/src"
 ninja -C out/arm64/ $task || ( test $? == 143 && echo ninja canceld )
 if test -n "$PUSH_TOKEN"
 then
-    cd "$HOME/cache"
+    cd "$ROOT/cache"
     git add .
     git commit -m "ninja $task" || echo no change,
     git push
