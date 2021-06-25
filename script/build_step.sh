@@ -12,6 +12,11 @@ if test -n "$PUSH_TOKEN"
 then
     cd "$ROOT/cache"
     git add .
-    git commit -m "ninja $task" || echo no change,
+    if test -f "$FLAG_STOP"
+    then
+        git commit -m "ninja $task stop" || echo no change,
+    else
+        git commit -m "ninja $task" || echo no change,
+    fi
     git push
 fi
