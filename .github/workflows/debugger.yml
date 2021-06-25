@@ -48,7 +48,7 @@ jobs:
 
     - name: save prepare.sh
       run: |
-        cat > $ROOT/script/prepare.sh <<EOF
+        cat > "$ROOT/script/prepare.sh" <<EOF
         . $ROOT/script/download_ccache.sh
         . $ROOT/script/create_ccache_config.sh
         . $ROOT/script/maximize_build_space.sh
@@ -56,6 +56,7 @@ jobs:
         . $ROOT/script/download_src.sh
         . $ROOT/script/gen.sh
         EOF
+        chmod +x "$ROOT/script/prepare.sh"
 
     - name: keepalive
       run: |
