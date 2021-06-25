@@ -26,6 +26,8 @@ jobs:
         echo BUILD_NAME="$BUILD_NAME" >> .custom_env
         echo BUILD_VERSION="$BUILD_VERSION" >> .custom_env
         echo BUILD_NAME_WITH_VERSION="$BUILD_NAME_WITH_VERSION" >> .custom_env
+        STABLE_VERSION=$(curl "https://omahaproxy.appspot.com/all" | grep -Fi "android,stable" | cut -f3 -d",")
+        echo STABLE_VERSION="$STABLE_VERSION" >> .custom_env
         echo "CC=ccache clang -Qunused-arguments" >> .custom_env
         echo "CXX=ccache clang++ -Qunused-arguments" >> .custom_env
         echo "START_TIME=$(date '+%s')" >> .custom_env

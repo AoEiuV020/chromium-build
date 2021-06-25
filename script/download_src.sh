@@ -1,6 +1,6 @@
 #!/bin/sh
 cd "$ROOT"
-git clone --depth 1 "https://github.com/chromium/chromium.git" src
+git clone --depth 1 --branch="$STABLE_VERSION" "https://github.com/chromium/chromium.git" src
 gclient config --name=src --unmanaged "https://github.com/chromium/chromium.git"
 echo 'target_os = ["android"]' >> .gclient
 gclient sync --nohooks
