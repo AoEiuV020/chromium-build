@@ -57,6 +57,11 @@ jobs:
     - run: $ROOT/script/download_src.sh
     - run: $ROOT/script/gen.sh
     - run: $ROOT/script/auto_kill.sh
+    - run: $ROOT/script/build_step.sh base:base
+    - run: $ROOT/script/build_step.sh v8:v8
+    - run: $ROOT/script/build_step.sh cc:cc
+    - run: $ROOT/script/build_step.sh chrome/browser:browser
+    - run: $ROOT/script/build_step.sh chrome/android:libchrome
     - run: $ROOT/script/build_step.sh chrome_public_apk
     - run: killall sleep || true
     - name: Uploading APK
