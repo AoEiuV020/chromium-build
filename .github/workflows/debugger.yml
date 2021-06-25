@@ -49,6 +49,7 @@ jobs:
     - name: save prepare.sh
       run: |
         cat > "$ROOT/script/prepare.sh" <<EOF
+        touch /tmp/keepalive
         . $ROOT/script/download_ccache.sh
         . $ROOT/script/create_ccache_config.sh
         . $ROOT/script/maximize_build_space.sh
@@ -58,8 +59,5 @@ jobs:
         EOF
         chmod +x "$ROOT/script/prepare.sh"
 
-    - name: keepalive
-      run: |
-        touch /tmp/keepalive
     - uses: csexton/debugger-action@master
 
