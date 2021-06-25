@@ -1,0 +1,67 @@
+
+name: build
+env:
+    TZ: Asia/Shanghai
+
+on:
+  schedule:
+      # 每6小时跑一遍，第5小时会用kill打断并保存编译缓存ccache，
+    - cron:  '0 2,8,14,20 * * *' # 时区对cron无效，所以要提前8个小时，
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: env
+      run: |
+        BUILD_NAME="${GITHUB_REPOSITORY#*/}"
+        BUILD_NAME="${BUILD_NAME%-build}"
+        if [[ ${GITHUB_REF} == refs/tags* ]]
+        then
+            BUILD_VERSION=${GITHUB_REF#refs/tags/}
+        else
+            BUILD_VERSION="$(date +'%Y%m%d%H%M%S')"
+        fi
+        BUILD_NAME_WITH_VERSION="$BUILD_NAME-$BUILD_VERSION"
+        echo BUILD_NAME="$BUILD_NAME" >> .custom_env
+        echo BUILD_VERSION="$BUILD_VERSION" >> .custom_env
+        echo BUILD_NAME_WITH_VERSION="$BUILD_NAME_WITH_VERSION" >> .custom_env
+        STABLE_VERSION=$(curl "https://omahaproxy.appspot.com/all" | grep -Fi "android,stable" | cut -f3 -d",")
+        echo STABLE_VERSION="$STABLE_VERSION" >> .custom_env
+        echo "START_TIME=$(date '+%s')" >> .custom_env
+        mkdir -p "$PWD/run"
+        echo "FLAG_STOP=$PWD/run/FLAG_STOP" >> .custom_env
+        echo "ROOT=$PWD" >> .custom_env
+        cat .custom_env
+        cat .custom_env >> $GITHUB_ENV
+        git config --global user.name "$GITHUB_ACTOR"
+        git config --global user.email "ignore@examble.com"
+
+    - name: config push
+      env:
+        PUSH_TOKEN: ${{ secrets.PUSH_TOKEN }}
+      if: ${{ env.PUSH_TOKEN != '' }}
+      run: |
+        echo "PUSH_TOKEN=${{ secrets.PUSH_TOKEN }}" >> $GITHUB_ENV
+        git config --global user.email "aoeiuv020@gmail.com"
+        git config --global user.name "AoEiuV020"
+
+
+    - run: $ROOT/script/download_ccache.sh
+    - run: $ROOT/script/create_ccache_config.sh
+    - run: $ROOT/script/maximize_build_space.sh
+    - run: $ROOT/script/download_depot.sh
+    - run: $ROOT/script/download_src.sh
+    - run: $ROOT/script/gen.sh
+    - run: $ROOT/script/auto_kill.sh
+    - run: $ROOT/script/build_step.sh chrome_public_apk
+    - run: killall sleep || true
+    - name: Uploading APK
+      if: hashFiles(env.FLAG_STOP) == ''
+      uses: actions/upload-artifact@v1
+      with:
+        name: apk-arm64
+        path: ./src/out/arm64/apks/
