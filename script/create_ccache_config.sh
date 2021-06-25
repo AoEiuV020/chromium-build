@@ -1,4 +1,5 @@
 #!/bin/sh
+sudo apt install -y ccache
 mkdir -p $HOME/.ccache/
 echo 'compiler_check = none' >> $HOME/.ccache/ccache.conf
 echo "stats = false" >> $HOME/.ccache/ccache.conf
