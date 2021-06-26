@@ -63,6 +63,7 @@ jobs:
         . $ROOT/script/create_ccache_config.sh
         . $ROOT/script/download_depot.sh
         . $ROOT/script/download_src.sh
+        . $ROOT/script/clean_git.sh
         . $ROOT/script/gen.sh
         EOF
         chmod +x "$ROOT/script/prepare.sh"
